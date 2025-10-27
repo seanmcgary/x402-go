@@ -1,3 +1,11 @@
 {
-      "forkL1Block": "9469897"
+      "forkL1Block": "9469897",
+      "payerAccount": {
+            "address": "0xbCFa538a81741fEC0a10A29ae65f604A5f2caA5d",
+            "privateKey": "0x69de5056fe42950afa00f903e86e0e6d90ec0e892186bcd5b8416a51fdd85200"
+      },
+      "recipientAccount": {
+            "address": "0x9b54D3A1f57d4f226021fe47B3ee42E5b892eF17",
+            "privateKey": "0x9af230c04ba476b5d4939984583b7303ca422a0ac77d3cb9d3835c87fd24a1de"
+      }
 }

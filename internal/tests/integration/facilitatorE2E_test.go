@@ -45,7 +45,6 @@ func Test_FacilitatorE2E(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to read chain config: %v", err)
 	}
-	_ = chainConfig
 
 	l1EthereumClient := ethereum.NewEthereumClient(&ethereum.EthereumClientConfig{
 		BaseUrl:   L1RpcUrl,
@@ -120,14 +119,39 @@ func Test_FacilitatorE2E(t *testing.T) {
 		t.Logf("✓ Current block number: %d", blockNumber)
 	}
 
-	// Load Anvil test accounts
-	payerKey, err := crypto.HexToECDSA("ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+	// Load test accounts from chain config
+	payerKeyHex := chainConfig.PayerAccount.PrivateKey
+	if len(payerKeyHex) >= 2 && payerKeyHex[:2] == "0x" {
+		payerKeyHex = payerKeyHex[2:]
+	}
+	payerKey, err := crypto.HexToECDSA(payerKeyHex)
 	if err != nil {
 		t.Errorf("Failed to parse payer key: %v", err)
 		hasErrors = true
 	}
 	payerAddr := crypto.PubkeyToAddress(payerKey.PublicKey)
-	recipientAddr := ethcommon.HexToAddress("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
+
+	recipientKeyHex := chainConfig.RecipientAccount.PrivateKey
+	if len(recipientKeyHex) >= 2 && recipientKeyHex[:2] == "0x" {
+		recipientKeyHex = recipientKeyHex[2:]
+	}
+	recipientKey, err := crypto.HexToECDSA(recipientKeyHex)
+	if err != nil {
+		t.Errorf("Failed to parse recipient key: %v", err)
+		hasErrors = true
+	}
+	recipientAddr := crypto.PubkeyToAddress(recipientKey.PublicKey)
+	_ = recipientKey // May be used for settlement tests in the future
+
+	// Verify addresses match config
+	if payerAddr.Hex() != chainConfig.PayerAccount.Address {
+		t.Errorf("Payer address mismatch: key gives %s, config has %s", payerAddr.Hex(), chainConfig.PayerAccount.Address)
+		hasErrors = true
+	}
+	if recipientAddr.Hex() != chainConfig.RecipientAccount.Address {
+		t.Errorf("Recipient address mismatch: key gives %s, config has %s", recipientAddr.Hex(), chainConfig.RecipientAccount.Address)
+		hasErrors = true
+	}
 
 	t.Logf("Payer address: %s", payerAddr.Hex())
 	t.Logf("Recipient address: %s", recipientAddr.Hex())
@@ -143,8 +167,8 @@ func Test_FacilitatorE2E(t *testing.T) {
 
 	// Test 1: EIP-712 Signature Creation and Verification
 	t.Run("EIP712SignatureValidation", func(t *testing.T) {
-		// USDC contract address (will exist when forking Base Sepolia)
-		tokenAddr := ethcommon.HexToAddress("0x036CbD53842c5426634e7929541eC2318f3dCF7e")
+		// Use USDC token address from test constants
+		tokenAddr := ethcommon.HexToAddress(tests.USDCTokenAddress)
 
 		// Create payment authorization
 		paymentAmount := big.NewInt(10000) // 0.01 USDC
@@ -215,7 +239,7 @@ func Test_FacilitatorE2E(t *testing.T) {
 
 	// Test 2: Full Payment Verification Flow
 	t.Run("PaymentVerificationFlow", func(t *testing.T) {
-		tokenAddr := ethcommon.HexToAddress("0x036CbD53842c5426634e7929541eC2318f3dCF7e")
+		tokenAddr := ethcommon.HexToAddress(tests.USDCTokenAddress)
 		paymentAmount := big.NewInt(10000)
 		currentTime := time.Now()
 		validAfter := big.NewInt(currentTime.Add(-5 * time.Minute).Unix())
@@ -303,13 +327,14 @@ func Test_FacilitatorE2E(t *testing.T) {
 			t.Logf("  Payer: %s", resp.Payer)
 
 			// Expected errors when account has no USDC balance
-			if resp.InvalidReason == x402types.ErrorInsufficientFunds {
+			switch resp.InvalidReason {
+			case x402types.ErrorInsufficientFunds:
 				t.Logf("✓ Insufficient funds error correctly detected")
 				t.Logf("  (This is expected - Anvil account has no USDC)")
-			} else if resp.InvalidReason == x402types.ErrorUnexpectedVerifyError {
+			case x402types.ErrorUnexpectedVerifyError:
 				t.Logf("✓ Contract interaction error detected")
 				t.Logf("  (This is expected - USDC contract may not exist on this fork)")
-			} else {
+			default:
 				t.Logf("⚠ Got error code: %s", resp.InvalidReason)
 				t.Logf("  This is acceptable for E2E test without real USDC")
 			}
@@ -336,9 +361,8 @@ func Test_FacilitatorE2E(t *testing.T) {
 			t.Logf("✓ Block number: %d", blockNum)
 		}
 
-		// Test BalanceAt
-		testAddr := ethcommon.HexToAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
-		bal, err := bcClient.BalanceAt(testCtx, testAddr, nil)
+		// Test BalanceAt using payer account from config
+		bal, err := bcClient.BalanceAt(testCtx, payerAddr, nil)
 		if err != nil {
 			t.Errorf("BalanceAt failed: %v", err)
 			hasErrors = true
@@ -356,7 +380,7 @@ func Test_FacilitatorE2E(t *testing.T) {
 		}
 
 		// Test PendingNonceAt
-		nonce, err := bcClient.PendingNonceAt(testCtx, testAddr)
+		nonce, err := bcClient.PendingNonceAt(testCtx, payerAddr)
 		if err != nil {
 			t.Errorf("PendingNonceAt failed: %v", err)
 			hasErrors = true
@@ -367,7 +391,7 @@ func Test_FacilitatorE2E(t *testing.T) {
 
 	// Test 4: Complete Authorization Validation
 	t.Run("AuthorizationValidation", func(t *testing.T) {
-		tokenAddr := ethcommon.HexToAddress("0x036CbD53842c5426634e7929541eC2318f3dCF7e")
+		tokenAddr := ethcommon.HexToAddress(tests.USDCTokenAddress)
 		paymentAmount := big.NewInt(10000)
 		currentTime := time.Now()
 		validAfter := big.NewInt(currentTime.Add(-5 * time.Minute).Unix())
@@ -422,7 +446,7 @@ func Test_FacilitatorE2E(t *testing.T) {
 
 	// Test 5: ERC-20 Contract Interaction
 	t.Run("ERC20ContractInteraction", func(t *testing.T) {
-		tokenAddr := ethcommon.HexToAddress("0x036CbD53842c5426634e7929541eC2318f3dCF7e")
+		tokenAddr := ethcommon.HexToAddress(tests.USDCTokenAddress)
 
 		erc20, err := blockchain.NewERC20(bcClient, tokenAddr)
 		if err != nil {

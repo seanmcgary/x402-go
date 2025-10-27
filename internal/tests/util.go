@@ -8,6 +8,14 @@ import (
 	"regexp"
 )
 
+const (
+	// USDC token address on Ethereum Sepolia
+	USDCTokenAddress = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+
+	// Base Sepolia USDC (alternative)
+	BaseSepoliaUSDCAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+)
+
 func GetProjectRootPath() string {
 	wd, err := os.Getwd()
 	if err != nil {
@@ -34,8 +42,17 @@ func GetProjectRootPath() string {
 	}
 }
 
+// TestAccount represents a test account with address and private key
+type TestAccount struct {
+	Address    string `json:"address"`
+	PrivateKey string `json:"privateKey"`
+}
+
+// ChainConfig contains test chain configuration and account data
 type ChainConfig struct {
-	ForkL1Block string `json:"forkL1Block"`
+	ForkL1Block      string      `json:"forkL1Block"`
+	PayerAccount     TestAccount `json:"payerAccount"`
+	RecipientAccount TestAccount `json:"recipientAccount"`
 }
 
 func ReadChainConfig(projectRoot string) (*ChainConfig, error) {
