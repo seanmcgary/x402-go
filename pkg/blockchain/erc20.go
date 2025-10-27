@@ -74,12 +74,6 @@ func (e *ERC20) SimulateTransferWithAuthorization(
 	nonce [32]byte,
 	signature []byte,
 ) error {
-	fmt.Printf("SimulateTransferWithAuthorization:\n")
-	fmt.Printf("  from=%s to=%s\n", from.Hex(), to.Hex())
-	fmt.Printf("  value=%s validAfter=%s validBefore=%s\n", value.String(), validAfter.String(), validBefore.String())
-	fmt.Printf("  nonce=0x%x\n", nonce)
-	fmt.Printf("  signature (65 bytes): 0x%x\n", signature)
-
 	// Pack the transferWithAuthorization call
 	// The signature is passed as a single bytes parameter, not split into r,s,v
 	data, err := e.abi.Pack(
@@ -96,25 +90,18 @@ func (e *ERC20) SimulateTransferWithAuthorization(
 		return fmt.Errorf("failed to pack transferWithAuthorization call: %w", err)
 	}
 
-	fmt.Printf("  Transaction data (hex): 0x%x\n", data)
-	fmt.Printf("  Transaction data length: %d bytes\n", len(data))
-	fmt.Printf("  Contract address: %s\n", e.contractAddress.Hex())
-
 	// Simulate the call
 	// Note: The From address doesn't matter for transferWithAuthorization
 	// because the contract validates the signature, not msg.sender
-	// We'll use the "from" address for simulation (any address works)
 	_, err = e.client.CallContract(ctx, ethereum.CallMsg{
-		From: from, // Simulate as if called by anyone
+		From: from,
 		To:   &e.contractAddress,
 		Data: data,
 	}, nil)
 	if err != nil {
-		fmt.Printf("  Contract call failed: %v\n", err)
 		return fmt.Errorf("transferWithAuthorization simulation failed: %w", err)
 	}
 
-	fmt.Printf("  ✓ Simulation successful\n")
 	return nil
 }
 
@@ -130,10 +117,6 @@ func (e *ERC20) ExecuteTransferWithAuthorization(
 	signature []byte,
 	executorPrivateKey *ecdsa.PrivateKey,
 ) (*types.Transaction, error) {
-	fmt.Printf("ExecuteTransferWithAuthorization:\n")
-	fmt.Printf("  from=%s to=%s value=%s\n", from.Hex(), to.Hex(), value.String())
-	fmt.Printf("  signature: 0x%x\n", signature)
-
 	// Pack the transferWithAuthorization call
 	// The signature is passed as a single bytes parameter
 	data, err := e.abi.Pack(

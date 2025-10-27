@@ -152,8 +152,6 @@ func (v *ExactSchemeVerifier) Verify(ctx context.Context, req x402types.VerifyRe
 		return nil, fmt.Errorf("failed to get chain ID: %w", err)
 	}
 
-	fmt.Printf("Chain ID from RPC: %s\n", chainID.String())
-
 	// Get token name and version from extra fields for EIP-712 domain
 	tokenName := "USD Coin"
 	tokenVersion := "2"
@@ -174,9 +172,6 @@ func (v *ExactSchemeVerifier) Verify(ctx context.Context, req x402types.VerifyRe
 		VerifyingContract: assetAddr,
 	}
 
-	fmt.Printf("EIP-712 Domain: name=%s version=%s chainId=%s contract=%s\n",
-		tokenName, tokenVersion, chainID.String(), assetAddr.Hex())
-
 	// Step 1: Signature Validation
 	params := crypto.TransferWithAuthorizationParams{
 		From:        fromAddr,
@@ -186,12 +181,6 @@ func (v *ExactSchemeVerifier) Verify(ctx context.Context, req x402types.VerifyRe
 		ValidBefore: validBefore,
 		Nonce:       nonce,
 	}
-
-	fmt.Printf("Signature validation:\n")
-	fmt.Printf("  from=%s to=%s value=%s\n", fromAddr.Hex(), toAddr.Hex(), value.String())
-	fmt.Printf("  validAfter=%s validBefore=%s\n", validAfter.String(), validBefore.String())
-	fmt.Printf("  nonce=0x%x\n", nonce)
-	fmt.Printf("  signature=%s\n", signature)
 
 	err = crypto.ValidateSignature(domain, params, signature, fromAddr)
 	if err != nil {
@@ -212,17 +201,13 @@ func (v *ExactSchemeVerifier) Verify(ctx context.Context, req x402types.VerifyRe
 	// Step 2: Balance Verification
 	erc20, err := blockchain.NewERC20(v.client, assetAddr)
 	if err != nil {
-		fmt.Printf("Failed to create ERC20 contract for %s: %v\n", assetAddr.Hex(), err)
 		return nil, fmt.Errorf("failed to create ERC20 contract: %w", err)
 	}
 
 	balance, err := erc20.BalanceOf(ctx, fromAddr)
 	if err != nil {
-		fmt.Printf("Failed to get balance for %s on contract %s: %v\n", fromAddr.Hex(), assetAddr.Hex(), err)
 		return nil, fmt.Errorf("failed to get balance: %w", err)
 	}
-
-	fmt.Printf("Balance check: address=%s balance=%s required=%s\n", fromAddr.Hex(), balance.String(), value.String())
 
 	if balance.Cmp(value) < 0 {
 		return &x402types.VerifyResponse{
@@ -304,7 +289,7 @@ func (v *ExactSchemeVerifier) Verify(ctx context.Context, req x402types.VerifyRe
 		}, nil
 	}
 
-	// Step 6: Transaction Simulation (optional - may fail on some contracts)
+	// Step 6: Transaction Simulation
 	err = erc20.SimulateTransferWithAuthorization(
 		ctx,
 		fromAddr,
@@ -316,17 +301,14 @@ func (v *ExactSchemeVerifier) Verify(ctx context.Context, req x402types.VerifyRe
 		signatureBytes,
 	)
 	if err != nil {
-		// Log the actual error for debugging
-		fmt.Printf("Transaction simulation failed (continuing anyway): %v\n", err)
-		// Note: Simulation can fail even if the transaction would succeed
-		// This can happen due to:
-		// - Contract-level signature recovery differences
-		// - Nonce already used in a previous test
-		// - Contract implementation differences
-		// We'll skip this step and rely on the other 5 verification steps
-		fmt.Println("  Skipping simulation step - relying on signature validation instead")
-	} else {
-		fmt.Println("  ✓ Transaction simulation passed")
+		// Simulation can fail for various reasons (nonce reuse, contract quirks)
+		// We rely on the cryptographic signature validation (Step 1) as the primary check
+		// The actual settlement will catch any real issues
+		return &x402types.VerifyResponse{
+			IsValid:       false,
+			InvalidReason: x402types.ErrorUnexpectedVerifyError,
+			Payer:         authorization.From,
+		}, nil
 	}
 
 	// All verifications passed

@@ -93,20 +93,12 @@ func VerifySignature(domain EIP712Domain, params TransferWithAuthorizationParams
 	// Compute final EIP-712 hash
 	hash := EIP712Hash(domainSeparator, structHash)
 
-	fmt.Printf("EIP-712 Recovery Debug:\n")
-	fmt.Printf("  Domain separator: %s\n", domainSeparator.Hex())
-	fmt.Printf("  Struct hash: %s\n", structHash.Hex())
-	fmt.Printf("  Final hash: %s\n", hash.Hex())
-	fmt.Printf("  Signature v (raw): %d\n", signature[64])
-
 	// Adjust v value if needed (some implementations use 27/28, we need 0/1)
 	sig := make([]byte, 65)
 	copy(sig, signature)
 	if sig[64] >= 27 {
 		sig[64] -= 27
 	}
-
-	fmt.Printf("  Signature v (adjusted): %d\n", sig[64])
 
 	// Recover public key from signature
 	pubKey, err := crypto.SigToPub(hash.Bytes(), sig)
@@ -116,7 +108,6 @@ func VerifySignature(domain EIP712Domain, params TransferWithAuthorizationParams
 
 	// Get address from public key
 	address := crypto.PubkeyToAddress(*pubKey)
-	fmt.Printf("  Recovered address: %s\n", address.Hex())
 	return address, nil
 }
 
