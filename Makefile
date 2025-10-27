@@ -39,7 +39,7 @@ build/cmd: build/cmd/facilitator
 # -----------------------------------------------------------------------------
 .PHONY: test
 test:
-	GOFLAGS="-count=1" go test -v -p 1 -parallel 1 ./...
+	GOFLAGS="-count=1" ./scripts/goTest.sh -v -p 1 -parallel 1 ./...
 
 .PHONY: lint
 lint:

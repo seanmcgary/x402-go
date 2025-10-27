@@ -321,11 +321,47 @@ This execution plan follows the order of requirements and implements the x402 fa
 
 The x402-go facilitator is fully implemented with:
 - ✓ Core protocol types and validation
-- ✓ Multi-network blockchain support
+- ✓ Multi-network blockchain support (Base, Ethereum, Avalanche)
 - ✓ EIP-712 and EIP-3009 cryptography
 - ✓ Payment verification and settlement
 - ✓ HTTP REST API with 4 endpoints
 - ✓ Discovery API (Bazaar)
-- ✓ Full CLI implementation
-- ✓ 114 passing tests
+- ✓ Full CLI implementation with urfave/cli
+- ✓ 114+ passing unit tests
+- ✓ End-to-end tests with Anvil support
+- ✓ 0 linting issues
 - ✓ Comprehensive documentation
+
+## End-to-End Testing
+
+The implementation includes comprehensive e2e tests that validate real blockchain interactions with Anvil:
+
+**Test Files**:
+- `pkg/integration/e2e_anvil_test.go` - Full e2e test suite
+
+**Running E2E Tests**:
+```bash
+# Option 1: Use the provided script
+./scripts/run-e2e-test.sh
+
+# Option 2: Manual setup
+# Terminal 1: Start Anvil
+anvil --fork-url https://sepolia.base.org --port 8545
+
+# Terminal 2: Run tests
+go test -v -tags=e2e ./pkg/integration/...
+```
+
+**What E2E Tests Validate**:
+- ✓ Real blockchain connection (Anvil on port 8545)
+- ✓ EIP-712 signature creation and verification
+- ✓ EIP-712 domain separator computation
+- ✓ Signature recovery with real private keys
+- ✓ Complete authorization validation
+- ✓ Time window enforcement
+- ✓ Amount validation
+- ✓ Full verification flow with blockchain queries
+- ✓ ERC-20 balance checks
+- ✓ All blockchain client operations (ChainID, BlockNumber, BalanceAt, etc.)
+
+See `docs/E2E_TESTING.md` for complete testing guide.
