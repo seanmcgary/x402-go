@@ -9,11 +9,12 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/seanmcgary/x402-go/pkg/blockchain/mocks"
 	"github.com/stretchr/testify/mock"
 )
 
 func TestNewERC20(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	contractAddr := common.HexToAddress("0x036CbD53842c5426634e7929541eC2318f3dCF7e")
 
 	erc20, err := NewERC20(mockClient, contractAddr)
@@ -27,7 +28,7 @@ func TestNewERC20(t *testing.T) {
 }
 
 func TestBalanceOf(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	contractAddr := common.HexToAddress("0x036CbD53842c5426634e7929541eC2318f3dCF7e")
 	account := common.HexToAddress("0x857b06519E91e3A54538791bDbb0E22373e36b66")
 
@@ -62,7 +63,7 @@ func TestBalanceOf(t *testing.T) {
 }
 
 func TestSimulateTransferWithAuthorization(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	contractAddr := common.HexToAddress("0x036CbD53842c5426634e7929541eC2318f3dCF7e")
 
 	erc20, err := NewERC20(mockClient, contractAddr)
@@ -100,7 +101,7 @@ func TestSimulateTransferWithAuthorization(t *testing.T) {
 }
 
 func TestGetTransactionStatus(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	contractAddr := common.HexToAddress("0x036CbD53842c5426634e7929541eC2318f3dCF7e")
 
 	erc20, err := NewERC20(mockClient, contractAddr)

@@ -122,28 +122,28 @@ This execution plan follows the order of requirements and implements the x402 fa
 **Objective**: Implement the exact scheme verification without blockchain execution
 
 ### Tasks:
-- [ ] Create pkg/schemes/exact package:
-  - [ ] Verifier interface
-  - [ ] ExactSchemeVerifier implementation
-  - [ ] Implement all verification steps from spec section 6.1.2:
+- [x] Create pkg/schemes/exact package:
+  - [x] Verifier interface
+  - [x] ExactSchemeVerifier implementation
+  - [x] Implement all verification steps from spec section 6.1.2:
     1. Signature validation
     2. Balance verification
     3. Amount validation
     4. Time window check
     5. Parameter matching
     6. Transaction simulation
-- [ ] Implement error code mapping (section 9 of spec):
-  - [ ] insufficient_funds
-  - [ ] invalid_exact_evm_payload_signature
-  - [ ] invalid_exact_evm_payload_authorization_valid_before/after
-  - [ ] invalid_exact_evm_payload_authorization_value
-  - [ ] invalid_exact_evm_payload_recipient_mismatch
-  - [ ] unexpected_verify_error
-- [ ] Write comprehensive unit tests:
-  - [ ] Test each verification step independently
-  - [ ] Test all error conditions
-  - [ ] Test with testnet and mainnet configurations
-- [ ] Verify tests pass with `make test`
+- [x] Implement error code mapping (section 9 of spec):
+  - [x] insufficient_funds
+  - [x] invalid_exact_evm_payload_signature
+  - [x] invalid_exact_evm_payload_authorization_valid_before/after
+  - [x] invalid_exact_evm_payload_authorization_value
+  - [x] invalid_exact_evm_payload_recipient_mismatch
+  - [x] unexpected_verify_error
+- [x] Write comprehensive unit tests:
+  - [x] Test each verification step independently
+  - [x] Test all error conditions
+  - [x] Test with testnet and mainnet configurations
+- [x] Verify tests pass with `make test`
 
 ---
 
@@ -152,22 +152,22 @@ This execution plan follows the order of requirements and implements the x402 fa
 **Objective**: Implement blockchain transaction execution
 
 ### Tasks:
-- [ ] Extend pkg/schemes/exact package:
-  - [ ] Settler interface
-  - [ ] ExactSchemeSettler implementation
-  - [ ] Transaction submission to blockchain
-  - [ ] Transaction receipt retrieval
-  - [ ] Success/failure determination
-- [ ] Implement settlement error handling:
-  - [ ] Network errors
-  - [ ] Transaction revert errors
-  - [ ] Gas estimation failures
-  - [ ] Nonce conflicts
-- [ ] Write unit tests with mocked blockchain:
-  - [ ] Test successful settlement
-  - [ ] Test failed settlement scenarios
-  - [ ] Test transaction receipt parsing
-- [ ] Verify tests pass with `make test`
+- [x] Extend pkg/schemes/exact package:
+  - [x] Settler interface
+  - [x] ExactSchemeSettler implementation
+  - [x] Transaction submission to blockchain
+  - [x] Transaction receipt retrieval
+  - [x] Success/failure determination
+- [x] Implement settlement error handling:
+  - [x] Network errors
+  - [x] Transaction revert errors
+  - [x] Gas estimation failures
+  - [x] Nonce conflicts
+- [x] Write unit tests with mocked blockchain:
+  - [x] Test successful settlement
+  - [x] Test failed settlement scenarios
+  - [x] Test transaction receipt parsing
+- [x] Verify tests pass with `make test`
 
 ---
 
@@ -313,8 +313,8 @@ This execution plan follows the order of requirements and implements the x402 fa
 
 **Current Status**: In Progress
 
-**Completed Milestones**: 4/11
+**Completed Milestones**: 6/11
 
-**Latest Completion**: Milestone 4 - Blockchain Interaction Layer ✓
+**Latest Completion**: Milestone 6 - Payment Settlement Logic ✓
 
-**Next Actions**: Begin Milestone 5 - Payment Verification Logic
+**Next Actions**: Begin Milestone 7 - HTTP API Endpoints

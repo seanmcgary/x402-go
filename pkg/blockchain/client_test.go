@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/seanmcgary/x402-go/pkg/blockchain/mocks"
 )
 
 func TestNewClient(t *testing.T) {
@@ -16,7 +17,7 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestBalanceAt(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	account := common.HexToAddress("0x1234567890123456789012345678901234567890")
 	expectedBalance := big.NewInt(1000000000000000000)
 
@@ -35,7 +36,7 @@ func TestBalanceAt(t *testing.T) {
 }
 
 func TestCallContract(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	contractAddr := common.HexToAddress("0x1234567890123456789012345678901234567890")
 	expectedResult := []byte{0x00, 0x00, 0x00, 0x01}
 
@@ -59,7 +60,7 @@ func TestCallContract(t *testing.T) {
 }
 
 func TestSendTransaction(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 
 	tx := types.NewTransaction(
 		0,
@@ -81,7 +82,7 @@ func TestSendTransaction(t *testing.T) {
 }
 
 func TestTransactionReceipt(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	txHash := common.HexToHash("0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef")
 
 	expectedReceipt := &types.Receipt{
@@ -104,7 +105,7 @@ func TestTransactionReceipt(t *testing.T) {
 }
 
 func TestChainID(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	expectedChainID := big.NewInt(84532)
 
 	mockClient.EXPECT().
@@ -122,7 +123,7 @@ func TestChainID(t *testing.T) {
 }
 
 func TestBlockNumber(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	expectedBlockNumber := uint64(1000000)
 
 	mockClient.EXPECT().
@@ -140,7 +141,7 @@ func TestBlockNumber(t *testing.T) {
 }
 
 func TestPendingNonceAt(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	account := common.HexToAddress("0x1234567890123456789012345678901234567890")
 	expectedNonce := uint64(5)
 
@@ -159,7 +160,7 @@ func TestPendingNonceAt(t *testing.T) {
 }
 
 func TestEstimateGas(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	expectedGas := uint64(21000)
 
 	call := ethereum.CallMsg{
@@ -182,7 +183,7 @@ func TestEstimateGas(t *testing.T) {
 }
 
 func TestSuggestGasPrice(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 	expectedGasPrice := big.NewInt(1000000000)
 
 	mockClient.EXPECT().
@@ -204,7 +205,7 @@ func TestWaitForReceipt(t *testing.T) {
 }
 
 func TestClose(t *testing.T) {
-	mockClient := NewMockEVMClient(t)
+	mockClient := mocks.NewMockEVMClient(t)
 
 	mockClient.EXPECT().Close()
 

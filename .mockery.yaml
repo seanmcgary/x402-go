@@ -3,5 +3,5 @@ packages:
     interfaces:
       EVMClient:
         config:
-          dir: pkg/blockchain
-          filename: evm_client_mock_test.go
+          dir: pkg/blockchain/mocks
+          filename: evm_client.go
