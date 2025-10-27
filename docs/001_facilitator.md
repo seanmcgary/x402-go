@@ -76,21 +76,21 @@ This execution plan follows the order of requirements and implements the x402 fa
 **Objective**: Implement EIP-712 signature validation and EIP-3009 verification
 
 ### Tasks:
-- [ ] Create pkg/crypto package:
-  - [ ] EIP-712 domain separator construction
-  - [ ] EIP-712 typed data hashing for TransferWithAuthorization
-  - [ ] Signature recovery and validation
-  - [ ] Address extraction from signatures
-- [ ] Implement EIP-3009 authorization validation:
-  - [ ] Time window validation (validAfter/validBefore)
-  - [ ] Amount validation
-  - [ ] Recipient address matching
-  - [ ] Nonce format validation (32-byte)
-- [ ] Write comprehensive unit tests:
-  - [ ] Test with valid signatures
-  - [ ] Test with invalid signatures
-  - [ ] Test edge cases (expired, not yet valid, wrong recipient)
-- [ ] Verify tests pass with `make test`
+- [x] Create pkg/crypto package:
+  - [x] EIP-712 domain separator construction
+  - [x] EIP-712 typed data hashing for TransferWithAuthorization
+  - [x] Signature recovery and validation
+  - [x] Address extraction from signatures
+- [x] Implement EIP-3009 authorization validation:
+  - [x] Time window validation (validAfter/validBefore)
+  - [x] Amount validation
+  - [x] Recipient address matching
+  - [x] Nonce format validation (32-byte)
+- [x] Write comprehensive unit tests:
+  - [x] Test with valid signatures
+  - [x] Test with invalid signatures
+  - [x] Test edge cases (expired, not yet valid, wrong recipient)
+- [x] Verify tests pass with `make test`
 
 ---
 
@@ -313,8 +313,8 @@ This execution plan follows the order of requirements and implements the x402 fa
 
 **Current Status**: In Progress
 
-**Completed Milestones**: 2/11
+**Completed Milestones**: 3/11
 
-**Latest Completion**: Milestone 2 - Network & Chain Configuration ✓
+**Latest Completion**: Milestone 3 - Cryptography & Signature Validation ✓
 
-**Next Actions**: Begin Milestone 3 - Cryptography & Signature Validation
+**Next Actions**: Begin Milestone 4 - Blockchain Interaction Layer
