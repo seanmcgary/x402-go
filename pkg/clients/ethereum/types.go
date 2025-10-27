@@ -7,9 +7,8 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/Layr-Labs/synapse/pkg/config"
-
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/seanmcgary/x402-go/pkg/config"
 )
 
 type (

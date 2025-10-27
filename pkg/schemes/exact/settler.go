@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/seanmcgary/x402-go/pkg/blockchain"
 	"github.com/seanmcgary/x402-go/pkg/crypto"
 	x402types "github.com/seanmcgary/x402-go/pkg/types"
@@ -146,6 +147,11 @@ func (s *ExactSchemeSettler) Settle(ctx context.Context, req x402types.SettleReq
 	}
 
 	// Execute the transfer with authorization
+	// The facilitator (using executor key) posts the transaction
+	// The contract will validate the user's signature and transfer tokens
+	executorAddress := ethcrypto.PubkeyToAddress(s.executorKey.PublicKey)
+	fmt.Printf("Settlement: Executor %s posting transaction for payer %s\n", executorAddress.Hex(), fromAddr.Hex())
+
 	tx, err := erc20.ExecuteTransferWithAuthorization(
 		ctx,
 		fromAddr,
@@ -159,6 +165,7 @@ func (s *ExactSchemeSettler) Settle(ctx context.Context, req x402types.SettleReq
 	)
 	if err != nil {
 		// Handle different types of errors
+		fmt.Printf("Settlement failed: %v\n", err)
 		return &x402types.SettlementResponse{
 			Success:     false,
 			ErrorReason: x402types.ErrorUnexpectedSettleError,

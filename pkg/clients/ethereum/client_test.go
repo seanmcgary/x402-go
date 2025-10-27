@@ -4,8 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Layr-Labs/synapse/pkg/logger"
-
+	"github.com/seanmcgary/x402-go/pkg/logger"
 	"github.com/stretchr/testify/assert"
 )
 

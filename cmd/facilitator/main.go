@@ -169,6 +169,9 @@ func serveAction(c *cli.Context) error {
 		return fmt.Errorf("failed to parse executor key: %w", err)
 	}
 
+	executorAddr := crypto.PubkeyToAddress(executorKey.PublicKey)
+	log.Printf("Executor address: %s", executorAddr.Hex())
+
 	// Create blockchain clients and scheme handlers for each network
 	verifiers := make(map[string]exact.Verifier)
 	settlers := make(map[string]exact.Settler)

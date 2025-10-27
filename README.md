@@ -8,14 +8,39 @@ x402-go is a facilitator service that handles payment verification and settlemen
 
 ## Quick Start
 
+### Try the Interactive Demo
+
+See x402 payments in action with a complete working example:
+
+```bash
+# Set your executor key (needs Base Sepolia ETH for gas)
+export X402_EXECUTOR_KEY=your_private_key_here
+
+# Start the demo (facilitator + resource server + web client)
+./scripts/startDemo.sh
+```
+
+This launches:
+- ✅ Go facilitator on port 8080
+- ✅ Express resource server on port 3000
+- ✅ Web client at http://localhost:3000
+
+**Try it:** Connect your MetaMask wallet and pay 0.01 USDC to access premium content!
+
+See [demo/README.md](demo/README.md) for full setup instructions and troubleshooting.
+
+### Run Just the Facilitator
+
 ```bash
 # Build
 make build/cmd/facilitator
 
 # Run with Base Sepolia testnet
-./bin/facilitator serve --base-sepolia-rpc https://sepolia.base.org
+./bin/facilitator serve \
+  --base-sepolia-rpc https://sepolia.base.org \
+  --executor-key YOUR_PRIVATE_KEY_HEX
 
-# Run with multiple networks
+# Or with multiple networks
 ./bin/facilitator serve \
   --base-sepolia-rpc https://sepolia.base.org \
   --base-rpc https://mainnet.base.org \

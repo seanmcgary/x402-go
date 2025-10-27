@@ -7,6 +7,8 @@ import (
 	"github.com/seanmcgary/x402-go/pkg/chains"
 )
 
+type ChainId uint
+
 // ChainConfig holds the configuration for a specific blockchain network
 type ChainConfig struct {
 	// NetworkID is the network identifier (e.g., "base-sepolia", "base")

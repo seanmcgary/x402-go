@@ -74,18 +74,14 @@ func (e *ERC20) SimulateTransferWithAuthorization(
 	nonce [32]byte,
 	signature []byte,
 ) error {
-	// Adjust signature format if needed (v should be 27 or 28 for contract calls)
-	v := signature[64]
-	if v < 27 {
-		v += 27
-	}
-
-	// Extract r and s as [32]byte arrays
-	var r, s [32]byte
-	copy(r[:], signature[:32])
-	copy(s[:], signature[32:64])
+	fmt.Printf("SimulateTransferWithAuthorization:\n")
+	fmt.Printf("  from=%s to=%s\n", from.Hex(), to.Hex())
+	fmt.Printf("  value=%s validAfter=%s validBefore=%s\n", value.String(), validAfter.String(), validBefore.String())
+	fmt.Printf("  nonce=0x%x\n", nonce)
+	fmt.Printf("  signature (65 bytes): 0x%x\n", signature)
 
 	// Pack the transferWithAuthorization call
+	// The signature is passed as a single bytes parameter, not split into r,s,v
 	data, err := e.abi.Pack(
 		"transferWithAuthorization",
 		from,
@@ -94,23 +90,31 @@ func (e *ERC20) SimulateTransferWithAuthorization(
 		validAfter,
 		validBefore,
 		nonce,
-		r, // r
-		s, // s
-		v, // v
+		signature, // Pass signature as bytes
 	)
 	if err != nil {
 		return fmt.Errorf("failed to pack transferWithAuthorization call: %w", err)
 	}
 
+	fmt.Printf("  Transaction data (hex): 0x%x\n", data)
+	fmt.Printf("  Transaction data length: %d bytes\n", len(data))
+	fmt.Printf("  Contract address: %s\n", e.contractAddress.Hex())
+
 	// Simulate the call
+	// Note: The From address doesn't matter for transferWithAuthorization
+	// because the contract validates the signature, not msg.sender
+	// We'll use the "from" address for simulation (any address works)
 	_, err = e.client.CallContract(ctx, ethereum.CallMsg{
+		From: from, // Simulate as if called by anyone
 		To:   &e.contractAddress,
 		Data: data,
 	}, nil)
 	if err != nil {
+		fmt.Printf("  Contract call failed: %v\n", err)
 		return fmt.Errorf("transferWithAuthorization simulation failed: %w", err)
 	}
 
+	fmt.Printf("  ✓ Simulation successful\n")
 	return nil
 }
 
@@ -126,18 +130,12 @@ func (e *ERC20) ExecuteTransferWithAuthorization(
 	signature []byte,
 	executorPrivateKey *ecdsa.PrivateKey,
 ) (*types.Transaction, error) {
-	// Adjust signature format if needed (v should be 27 or 28 for contract calls)
-	v := signature[64]
-	if v < 27 {
-		v += 27
-	}
-
-	// Extract r and s as [32]byte arrays
-	var r, s [32]byte
-	copy(r[:], signature[:32])
-	copy(s[:], signature[32:64])
+	fmt.Printf("ExecuteTransferWithAuthorization:\n")
+	fmt.Printf("  from=%s to=%s value=%s\n", from.Hex(), to.Hex(), value.String())
+	fmt.Printf("  signature: 0x%x\n", signature)
 
 	// Pack the transferWithAuthorization call
+	// The signature is passed as a single bytes parameter
 	data, err := e.abi.Pack(
 		"transferWithAuthorization",
 		from,
@@ -146,9 +144,7 @@ func (e *ERC20) ExecuteTransferWithAuthorization(
 		validAfter,
 		validBefore,
 		nonce,
-		r, // r
-		s, // s
-		v, // v
+		signature, // Pass signature as bytes
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to pack transferWithAuthorization call: %w", err)
@@ -239,9 +235,7 @@ const ERC20EIP3009ABI = `[
 			{"name": "validAfter", "type": "uint256"},
 			{"name": "validBefore", "type": "uint256"},
 			{"name": "nonce", "type": "bytes32"},
-			{"name": "r", "type": "bytes32"},
-			{"name": "s", "type": "bytes32"},
-			{"name": "v", "type": "uint8"}
+			{"name": "signature", "type": "bytes"}
 		],
 		"name": "transferWithAuthorization",
 		"outputs": [],
