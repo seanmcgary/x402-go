@@ -54,7 +54,7 @@ func NewChain(name, networkID string, chainID *big.Int, rpcURL string) Chain {
 	}
 }
 
-// Predefined chain IDs as specified in section 11.1 of the x402 specification
+// Predefined chain IDs
 var (
 	// Base Sepolia testnet
 	ChainIDBaseSepolia = big.NewInt(84532)
@@ -62,27 +62,23 @@ var (
 	// Base mainnet
 	ChainIDBase = big.NewInt(8453)
 
-	// Avalanche Fuji testnet
-	ChainIDAvalancheFuji = big.NewInt(43113)
-
-	// Avalanche mainnet
-	ChainIDAvalanche = big.NewInt(43114)
-
 	// Ethereum mainnet
 	ChainIDEthereum = big.NewInt(1)
 
 	// Ethereum Sepolia testnet
 	ChainIDEthereumSepolia = big.NewInt(11155111)
+
+	// Ethereum Holesky testnet
+	ChainIDEthereumHolesky = big.NewInt(17000)
 )
 
 // Network identifier constants
 const (
 	NetworkBaseSepolia     = "base-sepolia"
 	NetworkBase            = "base"
-	NetworkAvalancheFuji   = "avalanche-fuji"
-	NetworkAvalanche       = "avalanche"
 	NetworkEthereum        = "ethereum"
 	NetworkEthereumSepolia = "ethereum-sepolia"
+	NetworkEthereumHolesky = "ethereum-holesky"
 )
 
 // NewBaseSepolia creates a Base Sepolia testnet chain configuration
@@ -95,16 +91,6 @@ func NewBase(rpcURL string) Chain {
 	return NewChain("Base", NetworkBase, ChainIDBase, rpcURL)
 }
 
-// NewAvalancheFuji creates an Avalanche Fuji testnet chain configuration
-func NewAvalancheFuji(rpcURL string) Chain {
-	return NewChain("Avalanche Fuji", NetworkAvalancheFuji, ChainIDAvalancheFuji, rpcURL)
-}
-
-// NewAvalanche creates an Avalanche mainnet chain configuration
-func NewAvalanche(rpcURL string) Chain {
-	return NewChain("Avalanche", NetworkAvalanche, ChainIDAvalanche, rpcURL)
-}
-
 // NewEthereum creates an Ethereum mainnet chain configuration
 func NewEthereum(rpcURL string) Chain {
 	return NewChain("Ethereum", NetworkEthereum, ChainIDEthereum, rpcURL)
@@ -113,6 +99,11 @@ func NewEthereum(rpcURL string) Chain {
 // NewEthereumSepolia creates an Ethereum Sepolia testnet chain configuration
 func NewEthereumSepolia(rpcURL string) Chain {
 	return NewChain("Ethereum Sepolia", NetworkEthereumSepolia, ChainIDEthereumSepolia, rpcURL)
+}
+
+// NewEthereumHolesky creates an Ethereum Holesky testnet chain configuration
+func NewEthereumHolesky(rpcURL string) Chain {
+	return NewChain("Ethereum Holesky", NetworkEthereumHolesky, ChainIDEthereumHolesky, rpcURL)
 }
 
 // Registry manages a collection of chain configurations

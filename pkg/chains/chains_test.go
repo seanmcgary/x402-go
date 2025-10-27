@@ -63,36 +63,18 @@ func TestNewBase(t *testing.T) {
 	}
 }
 
-func TestNewAvalancheFuji(t *testing.T) {
-	rpcURL := "https://api.avax-test.network/ext/bc/C/rpc"
-	chain := NewAvalancheFuji(rpcURL)
+func TestNewEthereumHolesky(t *testing.T) {
+	rpcURL := "https://ethereum-holesky.publicnode.com"
+	chain := NewEthereumHolesky(rpcURL)
 
-	if chain.Name() != "Avalanche Fuji" {
-		t.Errorf("Expected name 'Avalanche Fuji', got %s", chain.Name())
+	if chain.Name() != "Ethereum Holesky" {
+		t.Errorf("Expected name 'Ethereum Holesky', got %s", chain.Name())
 	}
-	if chain.NetworkID() != NetworkAvalancheFuji {
-		t.Errorf("Expected networkID %s, got %s", NetworkAvalancheFuji, chain.NetworkID())
+	if chain.NetworkID() != NetworkEthereumHolesky {
+		t.Errorf("Expected networkID %s, got %s", NetworkEthereumHolesky, chain.NetworkID())
 	}
-	if chain.ChainID().Cmp(ChainIDAvalancheFuji) != 0 {
-		t.Errorf("Expected chainID %s, got %s", ChainIDAvalancheFuji.String(), chain.ChainID().String())
-	}
-	if chain.RPCURL() != rpcURL {
-		t.Errorf("Expected rpcURL %s, got %s", rpcURL, chain.RPCURL())
-	}
-}
-
-func TestNewAvalanche(t *testing.T) {
-	rpcURL := "https://api.avax.network/ext/bc/C/rpc"
-	chain := NewAvalanche(rpcURL)
-
-	if chain.Name() != "Avalanche" {
-		t.Errorf("Expected name 'Avalanche', got %s", chain.Name())
-	}
-	if chain.NetworkID() != NetworkAvalanche {
-		t.Errorf("Expected networkID %s, got %s", NetworkAvalanche, chain.NetworkID())
-	}
-	if chain.ChainID().Cmp(ChainIDAvalanche) != 0 {
-		t.Errorf("Expected chainID %s, got %s", ChainIDAvalanche.String(), chain.ChainID().String())
+	if chain.ChainID().Cmp(ChainIDEthereumHolesky) != 0 {
+		t.Errorf("Expected chainID %s, got %s", ChainIDEthereumHolesky.String(), chain.ChainID().String())
 	}
 	if chain.RPCURL() != rpcURL {
 		t.Errorf("Expected rpcURL %s, got %s", rpcURL, chain.RPCURL())
@@ -143,10 +125,9 @@ func TestChainIDConstants(t *testing.T) {
 	}{
 		{"Base Sepolia", ChainIDBaseSepolia, 84532},
 		{"Base", ChainIDBase, 8453},
-		{"Avalanche Fuji", ChainIDAvalancheFuji, 43113},
-		{"Avalanche", ChainIDAvalanche, 43114},
 		{"Ethereum", ChainIDEthereum, 1},
 		{"Ethereum Sepolia", ChainIDEthereumSepolia, 11155111},
+		{"Ethereum Holesky", ChainIDEthereumHolesky, 17000},
 	}
 
 	for _, tt := range tests {
@@ -291,18 +272,17 @@ func TestRegistryMultipleRegistrations(t *testing.T) {
 	chains := []Chain{
 		NewBaseSepolia("https://sepolia.base.org"),
 		NewBase("https://mainnet.base.org"),
-		NewAvalancheFuji("https://api.avax-test.network/ext/bc/C/rpc"),
-		NewAvalanche("https://api.avax.network/ext/bc/C/rpc"),
 		NewEthereum("https://eth.llamarpc.com"),
 		NewEthereumSepolia("https://eth-sepolia.public.blastapi.io"),
+		NewEthereumHolesky("https://ethereum-holesky.publicnode.com"),
 	}
 
 	for _, chain := range chains {
 		registry.Register(chain)
 	}
 
-	if len(registry.List()) != 6 {
-		t.Errorf("Expected 6 chains registered, got %d", len(registry.List()))
+	if len(registry.List()) != 5 {
+		t.Errorf("Expected 5 chains registered, got %d", len(registry.List()))
 	}
 
 	// Verify each chain can be retrieved

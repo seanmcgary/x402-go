@@ -48,12 +48,14 @@ See [API documentation](#api-documentation) below for detailed request/response 
 ### Command Line Flags
 
 ```
---host value              Host to bind to (default: "0.0.0.0")
---port value              Port to listen on (default: 8080)
---base-sepolia-rpc value  RPC endpoint for Base Sepolia
---base-rpc value          RPC endpoint for Base mainnet
---ethereum-rpc value      RPC endpoint for Ethereum mainnet
---executor-key value      Private key for executing transactions (hex format)
+--host value                 Host to bind to (default: "0.0.0.0")
+--port value                 Port to listen on (default: 8080)
+--base-sepolia-rpc value     RPC endpoint for Base Sepolia
+--base-rpc value             RPC endpoint for Base mainnet
+--ethereum-rpc value         RPC endpoint for Ethereum mainnet
+--ethereum-sepolia-rpc value RPC endpoint for Ethereum Sepolia
+--ethereum-holesky-rpc value RPC endpoint for Ethereum Holesky
+--executor-key value         Private key for executing transactions (hex format)
 ```
 
 ### Environment Variables
@@ -66,6 +68,8 @@ export X402_PORT=8080
 export X402_BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
 export X402_BASE_RPC_URL=https://mainnet.base.org
 export X402_ETHEREUM_RPC_URL=https://eth.llamarpc.com
+export X402_ETHEREUM_SEPOLIA_RPC_URL=https://ethereum-sepolia.publicnode.com
+export X402_ETHEREUM_HOLESKY_RPC_URL=https://ethereum-holesky.publicnode.com
 export X402_EXECUTOR_KEY=your_private_key_hex
 
 ./bin/facilitator serve
@@ -115,10 +119,9 @@ docker run -p 8080:8080 \
 - **base**: Base mainnet (Chain ID: 8453)
 - **ethereum**: Ethereum mainnet (Chain ID: 1)
 - **ethereum-sepolia**: Ethereum Sepolia testnet (Chain ID: 11155111)
-- **avalanche-fuji**: Avalanche Fuji testnet (Chain ID: 43113)
-- **avalanche**: Avalanche mainnet (Chain ID: 43114)
+- **ethereum-holesky**: Ethereum Holesky testnet (Chain ID: 17000)
 
-Additional networks can be added by extending the chain registry.
+The chain registry system makes it easy to add additional networks.
 
 ## Security Features
 

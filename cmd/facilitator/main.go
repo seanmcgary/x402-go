@@ -70,6 +70,16 @@ func main() {
 						EnvVars: []string{"X402_ETHEREUM_RPC_URL"},
 					},
 					&cli.StringFlag{
+						Name:    "ethereum-sepolia-rpc",
+						Usage:   "RPC endpoint for Ethereum Sepolia",
+						EnvVars: []string{"X402_ETHEREUM_SEPOLIA_RPC_URL"},
+					},
+					&cli.StringFlag{
+						Name:    "ethereum-holesky-rpc",
+						Usage:   "RPC endpoint for Ethereum Holesky",
+						EnvVars: []string{"X402_ETHEREUM_HOLESKY_RPC_URL"},
+					},
+					&cli.StringFlag{
 						Name:    "executor-key",
 						Usage:   "Private key for executing transactions (hex format without 0x prefix)",
 						EnvVars: []string{"X402_EXECUTOR_KEY"},
@@ -118,6 +128,22 @@ func serveAction(c *cli.Context) error {
 	if rpcURL := c.String("ethereum-rpc"); rpcURL != "" {
 		cfg.Chains = append(cfg.Chains, config.ChainConfig{
 			NetworkID: chains.NetworkEthereum,
+			RPCURL:    rpcURL,
+			Enabled:   true,
+		})
+	}
+
+	if rpcURL := c.String("ethereum-sepolia-rpc"); rpcURL != "" {
+		cfg.Chains = append(cfg.Chains, config.ChainConfig{
+			NetworkID: chains.NetworkEthereumSepolia,
+			RPCURL:    rpcURL,
+			Enabled:   true,
+		})
+	}
+
+	if rpcURL := c.String("ethereum-holesky-rpc"); rpcURL != "" {
+		cfg.Chains = append(cfg.Chains, config.ChainConfig{
+			NetworkID: chains.NetworkEthereumHolesky,
 			RPCURL:    rpcURL,
 			Enabled:   true,
 		})

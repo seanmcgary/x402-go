@@ -321,7 +321,7 @@ This execution plan follows the order of requirements and implements the x402 fa
 
 The x402-go facilitator is fully implemented with:
 - ✓ Core protocol types and validation
-- ✓ Multi-network blockchain support (Base, Ethereum, Avalanche)
+- ✓ Multi-network blockchain support (Base, Ethereum mainnet + testnets)
 - ✓ EIP-712 and EIP-3009 cryptography
 - ✓ Payment verification and settlement
 - ✓ HTTP REST API with 4 endpoints

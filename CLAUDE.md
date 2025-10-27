@@ -49,9 +49,9 @@ The facilitator provides HTTP REST APIs:
 
 - `base-sepolia`: Base Sepolia testnet (Chain ID: 84532)
 - `base`: Base mainnet (Chain ID: 8453)
-- `avalanche-fuji`: Avalanche Fuji testnet (Chain ID: 43113)
-- `avalanche`: Avalanche mainnet (Chain ID: 43114)
-- `iotex`: IoTeX mainnet
+- `ethereum`: Ethereum mainnet (Chain ID: 1)
+- `ethereum-sepolia`: Ethereum Sepolia testnet (Chain ID: 11155111)
+- `ethereum-holesky`: Ethereum Holesky testnet (Chain ID: 17000)
 
 ## Supported Assets
 

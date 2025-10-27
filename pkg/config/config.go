@@ -98,14 +98,12 @@ func (c *Config) BuildChainRegistry() (*chains.Registry, error) {
 			chain = chains.NewBaseSepolia(chainCfg.RPCURL)
 		case chains.NetworkBase:
 			chain = chains.NewBase(chainCfg.RPCURL)
-		case chains.NetworkAvalancheFuji:
-			chain = chains.NewAvalancheFuji(chainCfg.RPCURL)
-		case chains.NetworkAvalanche:
-			chain = chains.NewAvalanche(chainCfg.RPCURL)
 		case chains.NetworkEthereum:
 			chain = chains.NewEthereum(chainCfg.RPCURL)
 		case chains.NetworkEthereumSepolia:
 			chain = chains.NewEthereumSepolia(chainCfg.RPCURL)
+		case chains.NetworkEthereumHolesky:
+			chain = chains.NewEthereumHolesky(chainCfg.RPCURL)
 		default:
 			return nil, fmt.Errorf("unsupported network ID: %s", chainCfg.NetworkID)
 		}
@@ -147,24 +145,6 @@ func LoadFromEnv() (*Config, error) {
 		})
 	}
 
-	// Avalanche Fuji
-	if rpcURL := os.Getenv("X402_AVALANCHE_FUJI_RPC_URL"); rpcURL != "" {
-		config.Chains = append(config.Chains, ChainConfig{
-			NetworkID: chains.NetworkAvalancheFuji,
-			RPCURL:    rpcURL,
-			Enabled:   getEnvAsBoolOrDefault("X402_AVALANCHE_FUJI_ENABLED", true),
-		})
-	}
-
-	// Avalanche
-	if rpcURL := os.Getenv("X402_AVALANCHE_RPC_URL"); rpcURL != "" {
-		config.Chains = append(config.Chains, ChainConfig{
-			NetworkID: chains.NetworkAvalanche,
-			RPCURL:    rpcURL,
-			Enabled:   getEnvAsBoolOrDefault("X402_AVALANCHE_ENABLED", true),
-		})
-	}
-
 	// Ethereum
 	if rpcURL := os.Getenv("X402_ETHEREUM_RPC_URL"); rpcURL != "" {
 		config.Chains = append(config.Chains, ChainConfig{
@@ -180,6 +160,15 @@ func LoadFromEnv() (*Config, error) {
 			NetworkID: chains.NetworkEthereumSepolia,
 			RPCURL:    rpcURL,
 			Enabled:   getEnvAsBoolOrDefault("X402_ETHEREUM_SEPOLIA_ENABLED", true),
+		})
+	}
+
+	// Ethereum Holesky
+	if rpcURL := os.Getenv("X402_ETHEREUM_HOLESKY_RPC_URL"); rpcURL != "" {
+		config.Chains = append(config.Chains, ChainConfig{
+			NetworkID: chains.NetworkEthereumHolesky,
+			RPCURL:    rpcURL,
+			Enabled:   getEnvAsBoolOrDefault("X402_ETHEREUM_HOLESKY_ENABLED", true),
 		})
 	}
 
