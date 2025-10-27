@@ -176,37 +176,37 @@ This execution plan follows the order of requirements and implements the x402 fa
 **Objective**: Implement the three facilitator REST endpoints
 
 ### Tasks:
-- [ ] Create pkg/facilitator package:
-  - [ ] FacilitatorService struct
-  - [ ] Service constructor with dependencies
-  - [ ] Business logic for verify/settle/supported operations
-- [ ] Create pkg/transport/http package:
-  - [ ] HTTP handler implementations
-  - [ ] Request validation and parsing
-  - [ ] Response formatting
-  - [ ] Error response handling
-- [ ] Implement POST /verify endpoint (spec section 7.1):
-  - [ ] Parse VerifyRequest
-  - [ ] Validate request structure
-  - [ ] Call verification logic
-  - [ ] Return VerifyResponse
-- [ ] Implement POST /settle endpoint (spec section 7.2):
-  - [ ] Parse SettleRequest
-  - [ ] Validate request structure
-  - [ ] Call settlement logic
-  - [ ] Return SettlementResponse
-- [ ] Implement GET /supported endpoint (spec section 7.3):
-  - [ ] Return list of supported schemes and networks
-  - [ ] Format response per spec
-- [ ] Add middleware for:
-  - [ ] Request logging
-  - [ ] Error recovery
-  - [ ] Content-type validation
-- [ ] Write HTTP integration tests:
-  - [ ] Test each endpoint with valid requests
-  - [ ] Test error cases
-  - [ ] Test malformed requests
-- [ ] Verify tests pass with `make test`
+- [x] Create pkg/facilitator package:
+  - [x] FacilitatorService struct
+  - [x] Service constructor with dependencies
+  - [x] Business logic for verify/settle/supported operations
+- [x] Create pkg/transport/http package:
+  - [x] HTTP handler implementations
+  - [x] Request validation and parsing
+  - [x] Response formatting
+  - [x] Error response handling
+- [x] Implement POST /verify endpoint (spec section 7.1):
+  - [x] Parse VerifyRequest
+  - [x] Validate request structure
+  - [x] Call verification logic
+  - [x] Return VerifyResponse
+- [x] Implement POST /settle endpoint (spec section 7.2):
+  - [x] Parse SettleRequest
+  - [x] Validate request structure
+  - [x] Call settlement logic
+  - [x] Return SettlementResponse
+- [x] Implement GET /supported endpoint (spec section 7.3):
+  - [x] Return list of supported schemes and networks
+  - [x] Format response per spec
+- [x] Add middleware for:
+  - [x] Request logging
+  - [x] Error recovery
+  - [x] Content-type validation
+- [x] Write HTTP integration tests:
+  - [x] Test each endpoint with valid requests
+  - [x] Test error cases
+  - [x] Test malformed requests
+- [x] Verify tests pass with `make test`
 
 ---
 
@@ -215,25 +215,25 @@ This execution plan follows the order of requirements and implements the x402 fa
 **Objective**: Implement the Bazaar discovery endpoint
 
 ### Tasks:
-- [ ] Create pkg/discovery package:
-  - [ ] DiscoveryService interface
-  - [ ] Resource storage (in-memory for MVP, extensible for DB)
-  - [ ] Query filtering (type, limit, offset)
-  - [ ] Pagination logic
-- [ ] Create discovery types:
-  - [ ] DiscoveredResource struct
-  - [ ] DiscoveryResponse struct
-  - [ ] Pagination struct
-- [ ] Implement GET /discovery/resources endpoint (spec section 8.1):
-  - [ ] Parse query parameters
-  - [ ] Apply filters
-  - [ ] Implement pagination
-  - [ ] Return formatted response
-- [ ] Write unit tests:
-  - [ ] Test filtering by type
-  - [ ] Test pagination
-  - [ ] Test empty results
-- [ ] Verify tests pass with `make test`
+- [x] Create pkg/discovery package:
+  - [x] DiscoveryService interface
+  - [x] Resource storage (in-memory for MVP, extensible for DB)
+  - [x] Query filtering (type, limit, offset)
+  - [x] Pagination logic
+- [x] Create discovery types:
+  - [x] DiscoveredResource struct
+  - [x] DiscoveryResponse struct
+  - [x] Pagination struct
+- [x] Implement GET /discovery/resources endpoint (spec section 8.1):
+  - [x] Parse query parameters
+  - [x] Apply filters
+  - [x] Implement pagination
+  - [x] Return formatted response
+- [x] Write unit tests:
+  - [x] Test filtering by type
+  - [x] Test pagination
+  - [x] Test empty results
+- [x] Verify tests pass with `make test`
 
 ---
 
@@ -313,8 +313,8 @@ This execution plan follows the order of requirements and implements the x402 fa
 
 **Current Status**: In Progress
 
-**Completed Milestones**: 6/11
+**Completed Milestones**: 8/11
 
-**Latest Completion**: Milestone 6 - Payment Settlement Logic ✓
+**Latest Completion**: Milestone 8 - Discovery API ✓
 
-**Next Actions**: Begin Milestone 7 - HTTP API Endpoints
+**Next Actions**: Begin Milestone 9 - CLI Implementation

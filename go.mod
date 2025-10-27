@@ -6,6 +6,7 @@ toolchain go1.24.9
 
 require (
 	github.com/ethereum/go-ethereum v1.16.5
+	github.com/gorilla/mux v1.8.1
 	github.com/stretchr/testify v1.10.0
 )
 
