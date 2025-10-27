@@ -121,7 +121,7 @@ func StartL1Anvil(projectRoot string, ctx context.Context) (*exec.Cmd, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read chain config: %w", err)
 	}
-	forkUrl := "https://practical-serene-mound.ethereum-sepolia.quiknode.pro/3aaa48bd95f3d6aed60e89a1a466ed1e2a440b61/"
+	forkUrl := "https://ethereum-sepolia-rpc.publicnode.com"
 	portNumber := "8545"
 	blockTime := "2"
 	forkBlockNumber := chainConfig.ForkL1Block
