@@ -162,19 +162,6 @@ func TestExecuteTransferWithAuthorization(t *testing.T) {
 	t.Skip("ExecuteTransferWithAuthorization requires complex mocking - tested in integration tests")
 }
 
-// Helper function to match balanceOf call data
-func matchesBalanceOfCall(account common.Address) []byte {
-	contractABI, _ := abi.JSON(strings.NewReader(ERC20EIP3009ABI))
-	data, _ := contractABI.Pack("balanceOf", account)
-	return data
-}
-
-// Helper function to match transferWithAuthorization call data
-func matchesTransferWithAuthorizationCall() []byte {
-	// Return any non-nil byte slice as we're just checking the call is made
-	return []byte{}
-}
-
 func TestERC20EIP3009ABI(t *testing.T) {
 	// Test that the ABI is valid and can be parsed
 	_, err := abi.JSON(strings.NewReader(ERC20EIP3009ABI))

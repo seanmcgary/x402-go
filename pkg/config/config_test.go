@@ -376,26 +376,26 @@ func TestLoadFromEnv(t *testing.T) {
 		if val, ok := os.LookupEnv(key); ok {
 			originalEnv[key] = val
 		}
-		os.Unsetenv(key)
+		_ = os.Unsetenv(key)
 	}
 
 	// Restore env vars at the end
 	defer func() {
 		for _, key := range envVars {
-			os.Unsetenv(key)
+			_ = os.Unsetenv(key)
 		}
 		for key, val := range originalEnv {
-			os.Setenv(key, val)
+			_ = os.Setenv(key, val)
 		}
 	}()
 
 	// Test with custom env vars
-	os.Setenv("X402_HOST", "127.0.0.1")
-	os.Setenv("X402_PORT", "9090")
-	os.Setenv("X402_BASE_SEPOLIA_RPC_URL", "https://test.sepolia.base.org")
-	os.Setenv("X402_BASE_SEPOLIA_ENABLED", "true")
-	os.Setenv("X402_BASE_RPC_URL", "https://test.mainnet.base.org")
-	os.Setenv("X402_BASE_ENABLED", "false")
+	_ = os.Setenv("X402_HOST", "127.0.0.1")
+	_ = os.Setenv("X402_PORT", "9090")
+	_ = os.Setenv("X402_BASE_SEPOLIA_RPC_URL", "https://test.sepolia.base.org")
+	_ = os.Setenv("X402_BASE_SEPOLIA_ENABLED", "true")
+	_ = os.Setenv("X402_BASE_RPC_URL", "https://test.mainnet.base.org")
+	_ = os.Setenv("X402_BASE_ENABLED", "false")
 
 	config, err := LoadFromEnv()
 	if err != nil {
@@ -466,16 +466,16 @@ func TestLoadFromEnvDefaults(t *testing.T) {
 		if val, ok := os.LookupEnv(key); ok {
 			originalEnv[key] = val
 		}
-		os.Unsetenv(key)
+		_ = os.Unsetenv(key)
 	}
 
 	// Restore env vars at the end
 	defer func() {
 		for _, key := range envVars {
-			os.Unsetenv(key)
+			_ = os.Unsetenv(key)
 		}
 		for key, val := range originalEnv {
-			os.Setenv(key, val)
+			_ = os.Setenv(key, val)
 		}
 	}()
 
@@ -521,8 +521,8 @@ func TestGetEnvAsBoolOrDefault(t *testing.T) {
 				t.Errorf("Expected default true for empty string, got %v", result)
 			}
 
-			os.Setenv("TEST_BOOL", tt.value)
-			defer os.Unsetenv("TEST_BOOL")
+			_ = os.Setenv("TEST_BOOL", tt.value)
+			defer func() { _ = os.Unsetenv("TEST_BOOL") }()
 
 			result = getEnvAsBoolOrDefault("TEST_BOOL", false)
 			if result != tt.expected {

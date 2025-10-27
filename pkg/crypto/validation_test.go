@@ -247,21 +247,23 @@ func TestValidateNonce(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			nonce, err := ValidateNonce(tt.nonce)
-
 			if tt.expectError {
+				_, err := ValidateNonce(tt.nonce)
 				if err == nil {
 					t.Error("Expected error, got nil")
 				}
-			} else {
-				if err != nil {
-					t.Errorf("Expected no error, got: %v", err)
-					return
-				}
-				// Verify nonce is 32 bytes
-				if len(nonce) != 32 {
-					t.Errorf("Expected 32-byte nonce, got %d bytes", len(nonce))
-				}
+				return
+			}
+
+			//nolint:staticcheck // nonce is used below
+			nonce, err := ValidateNonce(tt.nonce)
+			if err != nil {
+				t.Errorf("Expected no error, got: %v", err)
+				return
+			}
+			// Verify nonce is 32 bytes
+			if len(nonce) != 32 {
+				t.Errorf("Expected 32-byte nonce, got %d bytes", len(nonce))
 			}
 		})
 	}

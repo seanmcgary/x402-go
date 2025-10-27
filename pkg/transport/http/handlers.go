@@ -130,7 +130,7 @@ func sendError(w http.ResponseWriter, statusCode int, message string, err error)
 	log.Printf("Error: %s: %v", message, err)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(map[string]string{
+	_ = json.NewEncoder(w).Encode(map[string]string{
 		"error":   message,
 		"details": err.Error(),
 	})
@@ -152,7 +152,7 @@ func recoveryMiddleware(next http.Handler) http.Handler {
 				log.Printf("Panic recovered: %v", err)
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(map[string]string{
+				_ = json.NewEncoder(w).Encode(map[string]string{
 					"error": "internal server error",
 				})
 			}
