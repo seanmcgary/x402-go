@@ -18,5 +18,4 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=builder /app/bin/facilitator /usr/local/bin/facilitator
 
-ENTRYPOINT ["/usr/local/bin/facilitator"]
-CMD ["serve"]
+CMD ["/usr/local/bin/facilitator", "serve"]

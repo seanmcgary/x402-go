@@ -5,3 +5,4 @@
 demo/server/node_modules/
 demo/server/.env
 demo/server/*.log
+/compute
