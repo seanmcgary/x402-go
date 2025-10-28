@@ -1,0 +1,7 @@
+packages:
+  github.com/seanmcgary/x402-go/pkg/blockchain:
+    interfaces:
+      EVMClient:
+        config:
+          dir: pkg/blockchain/mocks
+          filename: evm_client.go

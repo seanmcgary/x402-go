@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x402 Payment Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        button:hover { background: #5568d3; transform: translateY(-2px); }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .response {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .wallet-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .steps {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .step {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+        }
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .payment-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .payment-details dt {
+            font-weight: 600;
+            color: #333;
+            margin-top: 10px;
+        }
+        .payment-details dd {
+            color: #666;
+            margin-left: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔐 x402 Payment Demo</h1>
+            <p class="subtitle">Blockchain micropayments for API access</p>
+
+            <div id="walletSection">
+                <button onclick="connectWallet()" id="connectBtn">
+                    Connect Wallet
+                </button>
+                <div id="walletInfo" style="display: none;" class="wallet-info">
+                    <strong>Connected:</strong> <span id="walletAddress"></span>
+                    <button onclick="disconnectWallet()" id="disconnectBtn" style="background: #dc3545; margin-left: 15px; padding: 8px 16px; font-size: 14px;">
+                        Disconnect
+                    </button>
+                </div>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Connect Wallet</strong>
+                        <p style="color: #666; margin-top: 5px;">Connect your MetaMask wallet on Base Sepolia</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>Request Protected Data</strong>
+                        <p style="color: #666; margin-top: 5px;">Server will respond with payment requirements</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>Sign Payment Authorization</strong>
+                        <p style="color: #666; margin-top: 5px;">Sign EIP-712 message with your wallet</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>Get Data</strong>
+                        <p style="color: #666; margin-top: 5px;">Payment is verified and you receive the protected content</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button onclick="fetchProtectedData()" id="fetchBtn" disabled>
+                    💰 Pay 0.01 USDC & Access Protected Data
+                </button>
+                <button onclick="fetchFreeData()" style="background: #28a745; margin-left: 10px;">
+                    🆓 Get Free Data
+                </button>
+            </div>
+
+            <div id="status"></div>
+            <div id="response"></div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 15px;">Payment Information</h2>
+            <dl class="payment-details">
+                <dt>Network:</dt>
+                <dd>Base Sepolia (Chain ID: 84532)</dd>
+
+                <dt>Payment Amount:</dt>
+                <dd>0.01 USDC (10000 units)</dd>
+
+                <dt>Payment Scheme:</dt>
+                <dd>exact (EIP-3009 Transfer with Authorization)</dd>
+
+                <dt>Facilitator:</dt>
+                <dd id="facilitatorUrl">${FACILITATOR_URL}</dd>
+
+                <dt>Resource Wallet:</dt>
+                <dd id="resourceWallet">${RESOURCE_WALLET}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        let provider;
+        let signer;
+        let walletAddress;
+
+        // Update payment info in UI
+        document.getElementById('facilitatorUrl').textContent = '${FACILITATOR_URL}';
+        document.getElementById('resourceWallet').textContent = '${RESOURCE_WALLET}';
+
+        async function connectWallet() {
+            try {
+                if (!window.ethereum) {
+                    showStatus('Please install MetaMask!', 'error');
+                    return;
+                }
+
+                // Request fresh wallet selection
+                await window.ethereum.request({
+                    method: 'wallet_requestPermissions',
+                    params: [{ eth_accounts: {} }]
+                });
+
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send('eth_requestAccounts', []);
+                signer = provider.getSigner();
+                walletAddress = await signer.getAddress();
+
+                // Check network
+                const network = await provider.getNetwork();
+                if (network.chainId !== 84532) {
+                    showStatus('Please switch to Base Sepolia network (Chain ID: 84532)', 'warning');
+                    return;
+                }
+
+                document.getElementById('walletAddress').textContent = walletAddress;
+                document.getElementById('walletInfo').style.display = 'block';
+                document.getElementById('connectBtn').style.display = 'none';
+                document.getElementById('fetchBtn').disabled = false;
+
+                showStatus('Wallet connected successfully!', 'success');
+            } catch (error) {
+                showStatus('Failed to connect wallet: ' + error.message, 'error');
+            }
+        }
+
+        function disconnectWallet() {
+            provider = null;
+            signer = null;
+            walletAddress = null;
+
+            document.getElementById('walletInfo').style.display = 'none';
+            document.getElementById('connectBtn').style.display = 'inline-block';
+            document.getElementById('fetchBtn').disabled = true;
+            document.getElementById('status').innerHTML = '';
+            document.getElementById('response').innerHTML = '';
+
+            showStatus('Wallet disconnected', 'info');
+        }
+
+        async function fetchFreeData() {
+            try {
+                showStatus('Fetching free data...', 'info');
+                const response = await fetch(`${API_URL}/api/free-items`);
+                const data = await response.json();
+
+                showStatus('Free data received!', 'success');
+                showResponse(data);
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function fetchProtectedData() {
+            if (!signer) {
+                showStatus('Please connect your wallet first', 'warning');
+                return;
+            }
+
+            try {
+                showStatus('Step 1: Requesting protected data...', 'info');
+
+                // First request - will get 402 with payment requirements
+                let response = await fetch(`${API_URL}/api/protected-data`);
+
+                if (response.status === 402) {
+                    const paymentRequired = await response.json();
+                    showStatus('Step 2: Payment required. Creating authorization...', 'info');
+
+                    // Create payment authorization
+                    const paymentPayload = await createPaymentAuthorization(paymentRequired.accepts[0]);
+
+                    showStatus('Step 3: Submitting payment...', 'info');
+
+                    // Retry request with payment
+                    response = await fetch(`${API_URL}/api/protected-data`, {
+                        headers: {
+                            'X-Payment': JSON.stringify(paymentPayload)
+                        }
+                    });
+                }
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Request failed');
+                }
+
+                const data = await response.json();
+                showStatus('✅ Payment successful! Data received.', 'success');
+                showResponse(data);
+
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+                console.error(error);
+            }
+        }
+
+        async function createPaymentAuthorization(requirements) {
+            showStatus('Please sign the payment authorization in your wallet...', 'info');
+
+            const currentTime = Math.floor(Date.now() / 1000);
+            const validAfter = currentTime - 60;  // Valid from 1 minute ago
+            const validBefore = currentTime + 300; // Valid for 5 minutes
+
+            // Generate random nonce
+            const nonce = '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+
+            // EIP-712 domain
+            const domain = {
+                name: requirements.extra.name,
+                version: requirements.extra.version,
+                chainId: 84532,
+                verifyingContract: requirements.asset
+            };
+
+            // EIP-712 types
+            const types = {
+                TransferWithAuthorization: [
+                    { name: 'from', type: 'address' },
+                    { name: 'to', type: 'address' },
+                    { name: 'value', type: 'uint256' },
+                    { name: 'validAfter', type: 'uint256' },
+                    { name: 'validBefore', type: 'uint256' },
+                    { name: 'nonce', type: 'bytes32' }
+                ]
+            };
+
+            // Message to sign
+            const value = {
+                from: walletAddress,
+                to: requirements.payTo,
+                value: requirements.maxAmountRequired,
+                validAfter: validAfter.toString(),
+                validBefore: validBefore.toString(),
+                nonce: nonce
+            };
+
+            try {
+                // Sign with EIP-712
+                const signature = await signer._signTypedData(domain, types, value);
+
+                return {
+                    x402Version: 1,
+                    scheme: 'exact',
+                    network: requirements.network,
+                    payload: {
+                        signature: signature,
+                        authorization: {
+                            from: walletAddress,
+                            to: requirements.payTo,
+                            value: requirements.maxAmountRequired,
+                            validAfter: validAfter.toString(),
+                            validBefore: validBefore.toString(),
+                            nonce: nonce
+                        }
+                    }
+                };
+            } catch (error) {
+                throw new Error('User rejected signature: ' + error.message);
+            }
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function showResponse(data) {
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = `<div class="response">${JSON.stringify(data, null, 2)}</div>`;
+        }
+
+        // Auto-connect if already connected
+        window.addEventListener('load', async () => {
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                await connectWallet();
+            }
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
