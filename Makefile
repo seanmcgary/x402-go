@@ -32,6 +32,9 @@ build/cmd/facilitator:
 .PHONY: build/cmd
 build/cmd: build/cmd/facilitator
 
+.PHONY: docker/build
+docker/build:
+	docker build -t facilitator:latest .
 # -----------------------------------------------------------------------------
 # Tests and linting
 # -----------------------------------------------------------------------------
