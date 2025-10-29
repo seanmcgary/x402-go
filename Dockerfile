@@ -18,4 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=builder /app/bin/facilitator /usr/local/bin/facilitator
 
-CMD ["/usr/local/bin/facilitator", "serve"]
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/local/bin/facilitator"]
+CMD ["serve"]
