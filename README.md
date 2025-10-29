@@ -1,4 +1,4 @@
-![](./docs/images/x402-gopher.png)
+![](./docs/images/x402-gopher_200.png)
 
 # x402-go
 
