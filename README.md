@@ -1,3 +1,5 @@
+![](./docs/images/x402-gopher_200.png)
+
 # x402-go
 
 Go implementation of the [x402 protocol](https://github.com/coinbase/x402) for internet-native payments.
