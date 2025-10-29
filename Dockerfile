@@ -20,5 +20,4 @@ COPY --from=builder /app/bin/facilitator /usr/local/bin/facilitator
 
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/local/bin/facilitator"]
-CMD ["serve"]
+CMD ["/usr/local/bin/facilitator", "serve"]
